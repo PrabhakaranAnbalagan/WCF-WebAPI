@@ -1,0 +1,129 @@
+﻿@{
+    ViewBag.Title = "Item";
+}
+@Scripts.Render("~/bundles/jquery")
+<script>
+    $(document).ready(function () {
+        $.ajax( {
+            type: "GET",
+            url: '/item/GetAll',
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    let r = '<tr><td>' + item.ITCODE + '</td><td>' + item.ITDESC +
+                        '</td><td>' + item.ITRATE + '</td><tr>';
+                    $("#t1").append(r)
+                    })
+            },
+            error: function (xhr) {
+                console.log(xhr.error);
+            }
+        })
+
+        $("#btnsearch").click(function () {
+            let itcode = $("#itcode").val();
+            $.ajax({
+                type: "GET",
+                url: '/item/Get/' + itcode,
+                dataType: 'json',
+                success: function (item) {
+                    $("#itdesc").val(item.ITDESC);
+                    $("#itrate").val(item.ITRATE);
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnadd").click(function () {
+            let itcode = $("#itcode").val();
+            let itdesc = $("#itdesc").val();
+            let itrate = $("#itrate").val();
+            $.ajax({
+                type: "POST",
+                url: '/item/Add',
+                data: { ITCODE: itcode, ITDESC: itdesc, ITRATE: itrate},
+                dataType: 'json',
+                success: function () {
+                    alert("Item Added");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnedit").click(function () {
+            let itcode = $("#itcode").val();
+            let itdesc = $("#itdesc").val();
+            let itrate = $("#itrate").val();
+            $.ajax({
+                type: "PUT",
+                url: '/item/Edit',
+                data: { ITCODE: itcode, ITDESC: itdesc, ITRATE: itrate },
+                dataType: 'json',
+                success: function () {
+                    alert("Item Updated");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btndelete").click(function () {
+            let itcode = $("#itcode").val();
+            $.ajax({
+                type: "Delete",
+                url: '/item/Delete/' + itcode,
+                dataType: 'json',
+                success: function () {
+                    alert("Item Deleted");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+    })
+</script>
+<h2>Item</h2>
+<div class="container">
+    <table class="table table-bordered">
+        <tr class="form-group">
+            <td>ItemCode</td>
+            <td>
+                @Html.TextBox("itcode", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>ItemDescription</td>
+            <td>
+                @Html.TextBox("itdesc", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>ItemRate</td>
+            <td>
+                @Html.TextBox("itrate", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button class="btn btn-primary" id="btnsearch">Search</button> &nbsp;
+                <button class="btn btn-primary" id="btnadd">Add</button> &nbsp;
+                <button class="btn btn-primary" id="btnedit">Edit</button> &nbsp;
+                <button class="btn btn-primary" id="btndelete">Delete</button> &nbsp;
+            </td>
+        </tr>
+    </table>
+    <table class="table table-bordered" id="t1">
+        <tr>
+            <th>ItemCode</th>
+            <th>ItemDescription</th>
+            <th>ItemRate</th>
+        </tr>
+    </table>
+</div>

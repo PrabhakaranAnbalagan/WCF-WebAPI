@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewBag.Title = "POMaster";
+}
+@Scripts.Render("~/bundles/jquery")
+<script>
+    $(document).ready(function () {
+        $.ajax( {
+            type: "GET",
+            url: '/pomaster/GetAll',
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    let r = '<tr><td>' + item.PONO + '</td><td>' + item.PODATE +
+                        '</td><td>' + item.SUPLNO + '</td><tr>';
+                    $("#t1").append(r)
+                    })
+            },
+            error: function (xhr) {
+                console.log(xhr.error);
+            }
+        })
+
+        $("#btnsearch").click(function () {
+            let pono = $("#pono").val();
+            $.ajax({
+                type: "GET",
+                url: '/pomaster/Get/'+ pono,
+                dataType: 'json',
+                success: function (item) {
+                    $("#podate").val(item.PODATE);
+                    $("#suplno").val(item.SUPLNO);
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnadd").click(function () {
+            let pono = $("#pono").val();
+            let podate = $("#podate").val();
+            let suplno = $("#suplno").val();
+            $.ajax({
+                type: "POST",
+                url: '/pomaster/Add',
+                data: { PONO: pono, PODATE: podate, SUPLNO: suplno },
+                dataType: 'json',
+                success: function () {
+                    alert("POMaster Added");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnedit").click(function () {
+            let pono = $("#pono").val();
+            let podate = $("#podate").val();
+            let suplno = $("#suplno").val();
+            $.ajax({
+                type: "PUT",
+                url: '/pomaster/Edit',
+                data: { PONO: pono, PODATE: podate, SUPLNO: suplno },
+                dataType: 'json',
+                success: function () {
+                    alert("POMaster Updated");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btndelete").click(function () {
+            let pono = $("#pono").val();
+            $.ajax({
+                type: "Delete",
+                url: '/pomaster/Delete/' + pono,
+                dataType: 'json',
+                success: function () {
+                    alert("POMaster Deleted");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+    })
+</script>
+<h2>POMaster</h2>
+<div class="container">
+    <table class="table table-bordered">
+        <tr class="form-group">
+            <td>PurchaseOrderNo</td>
+            <td>
+                @Html.TextBox("pono", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>PurchaseOrderDate</td>
+            <td>
+                @Html.TextBox("podate", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>SupplierNo</td>
+            <td>
+                @Html.TextBox("suplno", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button class="btn btn-primary" id="btnsearch">Search</button> &nbsp;
+                <button class="btn btn-primary" id="btnadd">Add</button> &nbsp;
+                <button class="btn btn-primary" id="btnedit">Edit</button> &nbsp;
+                <button class="btn btn-primary" id="btndelete">Delete</button> &nbsp;
+            </td>
+        </tr>
+    </table>
+    <table class="table table-bordered" id="t1">
+        <tr>
+            <th>PurchaseOrderNo</th>
+            <th>PurchaseOrderDate</th>
+            <th>SupplierNo</th>
+        </tr>
+    </table>
+</div>

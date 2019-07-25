@@ -1,0 +1,156 @@
+﻿@*<div class="jumbotron">
+        <h1>ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
+        <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Getting started</h2>
+            <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
+            a broad range of clients, including browsers and mobile devices. ASP.NET Web API
+            is an ideal platform for building RESTful applications on the .NET Framework.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Get more libraries</h2>
+            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Web Hosting</h2>
+            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
+        </div>
+    </div>*@
+
+
+@{
+    ViewBag.Title = "Supplier";
+}
+@Scripts.Render("~/bundles/jquery")
+<script>
+    $(document).ready(function () {
+        $.ajax( {
+            type: "GET",
+            url: '/supplier/GetAll',
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    let r = '<tr><td>' + item.SUPLNO + '</td><td>' + item.SUPLNAME +
+                        '</td><td>' + item.SUPLADDR + '</td><tr>';
+                    $("#t1").append(r)
+                    })
+            },
+            error: function (xhr) {
+                console.log(xhr.error);
+            }
+        })
+
+        $("#btnsearch").click(function () {
+            let suplno = $("#suplno").val();
+            $.ajax({
+                type: "GET",
+                url: '/supplier/Get/'+ suplno,
+                dataType: 'json',
+                success: function (item) {
+                    $("#suplname").val(item.SUPLNAME);
+                    $("#supladdr").val(item.SUPLADDR);
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnadd").click(function () {
+            let suplno = $("#suplno").val();
+            let suplname = $("#suplname").val();
+            let supladdr = $("#supladdr").val();
+            $.ajax({
+                type: "POST",
+                url: '/supplier/Add',
+                data: {SUPLNO: suplno,SUPLNAME:suplname,SUPLADDR:supladdr},
+                dataType: 'json',
+                success: function () {
+                    alert("Supplier Added");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnedit").click(function () {
+            let suplno = $("#suplno").val();
+            let suplname = $("#suplname").val();
+            let supladdr = $("#supladdr").val();
+            $.ajax({
+                type: "PUT",
+                url: '/supplier/Edit',
+                data: { SUPLNO: suplno, SUPLNAME: suplname, SUPLADDR: supladdr },
+                dataType: 'json',
+                success: function () {
+                    alert("Supplier Updated");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btndelete").click(function () {
+            let suplno = $("#suplno").val();
+            $.ajax({
+                type: "Delete",
+                url: '/supplier/Delete/' + suplno,
+                dataType: 'json',
+                success: function () {
+                    alert("Supplier Deleted");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+    })
+</script>
+<h2>Supplier</h2>
+<div class="container">
+    <table class="table table-bordered">
+        <tr class="form-group">
+            <td>SupplierNo</td>
+            <td>
+                @Html.TextBox("suplno", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>SupplierName</td>
+            <td>
+                @Html.TextBox("suplname", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>SupplierAddress</td>
+            <td>
+                @Html.TextArea("supladdr", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button class="btn btn-primary" id="btnsearch">Search</button> &nbsp;
+                <button class="btn btn-primary" id="btnadd">Add</button> &nbsp;
+                <button class="btn btn-primary" id="btnedit">Edit</button> &nbsp;
+                <button class="btn btn-primary" id="btndelete">Delete</button> &nbsp;
+            </td>
+        </tr>
+    </table>
+    <table class="table table-bordered" id="t1">
+        <tr>
+            <th>SupplierNo</th>
+            <th>SupplierName</th>
+            <th>SupplierAddress</th>
+        </tr>
+    </table>
+</div>
+

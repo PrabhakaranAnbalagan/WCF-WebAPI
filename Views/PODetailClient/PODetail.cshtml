@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewBag.Title = "PODetail";
+}
+@Scripts.Render("~/bundles/jquery")
+<script>
+    $(document).ready(function () {
+        $.ajax( {
+            type: "GET",
+            url: '/podetail/GetAll',
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    let r = '<tr><td>' + item.PONO + '</td><td>' + item.ITCODE +
+                        '</td><td>' + item.QTY + '</td><tr>';
+                    $("#t1").append(r)
+                    })
+            },
+            error: function (xhr) {
+                console.log(xhr.error);
+            }
+        })
+
+        $("#btnsearch").click(function () {
+            let pono = $("#pono").val();
+            $.ajax({
+                type: "GET",
+                url: '/podetail/Get/'+ pono,
+                dataType: 'json',
+                success: function (item) {
+                    $("#itcode").val(item.ITCODE);
+                    $("#qty").val(item.QTY);
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnadd").click(function () {
+            let pono = $("#pono").val();
+            let itcode = $("#itcode").val();
+            let qty = $("#qty").val();
+            $.ajax({
+                type: "POST",
+                url: '/podetail/Add',
+                data: { PONO: pono,ITCODE:itcode,QTY:qty},
+                dataType: 'json',
+                success: function () {
+                    alert("PODetail Added");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnedit").click(function () {
+            let pono = $("#pono").val();
+            let itcode = $("#itcode").val();
+            let qty = $("#qty").val();
+            $.ajax({
+                type: "PUT",
+                url: '/podetail/Edit',
+                data: { PONO: pono, ITCODE: itcode, QTY: qty },
+                dataType: 'json',
+                success: function () {
+                    alert("PODetail Updated");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btndelete").click(function () {
+            let pono = $("#pono").val();
+            $.ajax({
+                type: "Delete",
+                url: '/podetail/Delete/' + pono,
+                dataType: 'json',
+                success: function () {
+                    alert("PODetail Deleted");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+    })
+</script>
+<h2>PODetail</h2>
+<div class="container">
+    <table class="table table-bordered">
+        <tr class="form-group">
+            <td>PurchaseOrderNo</td>
+            <td>
+                @Html.TextBox("pono", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>ItemCode</td>
+            <td>
+                @Html.TextBox("itcode", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>Quantity</td>
+            <td>
+                @Html.TextBox("qty", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button class="btn btn-primary" id="btnsearch">Search</button> &nbsp;
+                <button class="btn btn-primary" id="btnadd">Add</button> &nbsp;
+                <button class="btn btn-primary" id="btnedit">Edit</button> &nbsp;
+                <button class="btn btn-primary" id="btndelete">Delete</button> &nbsp;
+            </td>
+        </tr>
+    </table>
+    <table class="table table-bordered" id="t1">
+        <tr>
+            <th>PurchaseOrderNo</th>
+            <th>ItemCode</th>
+            <th>Quantity</th>
+        </tr>
+    </table>
+</div>

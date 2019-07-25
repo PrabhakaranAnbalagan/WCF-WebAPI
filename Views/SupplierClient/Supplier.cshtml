@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewBag.Title = "Supplier";
+}
+@Scripts.Render("~/bundles/jquery")
+<script>
+    $(document).ready(function () {
+        $.ajax( {
+            type: "GET",
+            url: '/supplier/GetAll',
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    let r = '<tr><td>' + item.SUPLNO + '</td><td>' + item.SUPLNAME +
+                        '</td><td>' + item.SUPLADDR + '</td><tr>';
+                    $("#t1").append(r)
+                    })
+            },
+            error: function (xhr) {
+                console.log(xhr.error);
+            }
+        })
+
+        $("#btnsearch").click(function () {
+            let suplno = $("#suplno").val();
+            $.ajax({
+                type: "GET",
+                url: '/supplier/Get/'+ suplno,
+                dataType: 'json',
+                success: function (item) {
+                    $("#suplname").val(item.SUPLNAME);
+                    $("#supladdr").val(item.SUPLADDR);
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnadd").click(function () {
+            let suplno = $("#suplno").val();
+            let suplname = $("#suplname").val();
+            let supladdr = $("#supladdr").val();
+            $.ajax({
+                type: "POST",
+                url: '/supplier/Add',
+                data: {SUPLNO: suplno,SUPLNAME:suplname,SUPLADDR:supladdr},
+                dataType: 'json',
+                success: function () {
+                    alert("Supplier Added");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btnedit").click(function () {
+            let suplno = $("#suplno").val();
+            let suplname = $("#suplname").val();
+            let supladdr = $("#supladdr").val();
+            $.ajax({
+                type: "PUT",
+                url: '/supplier/Edit',
+                data: { SUPLNO: suplno, SUPLNAME: suplname, SUPLADDR: supladdr },
+                dataType: 'json',
+                success: function () {
+                    alert("Supplier Updated");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+        $("#btndelete").click(function () {
+            let suplno = $("#suplno").val();
+            $.ajax({
+                type: "Delete",
+                url: '/supplier/Delete/' + suplno,
+                dataType: 'json',
+                success: function () {
+                    alert("Supplier Deleted");
+                },
+                error: function (xhr) {
+                    console.log(xhr.error);
+                }
+            })
+        })
+
+    })
+</script>
+<h2>Supplier</h2>
+<div class="container">
+    <table class="table table-bordered">
+        <tr class="form-group">
+            <td>SupplierNo</td>
+            <td>
+                @Html.TextBox("suplno", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>SupplierName</td>
+            <td>
+                @Html.TextBox("suplname", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr class="form-group">
+            <td>SupplierAddress</td>
+            <td>
+                @Html.TextArea("supladdr", null, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button class="btn btn-primary" id="btnsearch">Search</button> &nbsp;
+                <button class="btn btn-primary" id="btnadd">Add</button> &nbsp;
+                <button class="btn btn-primary" id="btnedit">Edit</button> &nbsp;
+                <button class="btn btn-primary" id="btndelete">Delete</button> &nbsp;
+            </td>
+        </tr>
+    </table>
+    <table class="table table-bordered" id="t1">
+        <tr>
+            <th>SupplierNo</th>
+            <th>SupplierName</th>
+            <th>SupplierAddress</th>
+        </tr>
+    </table>
+</div>
